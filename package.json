@@ -1,0 +1,39 @@
+{
+  "name": "plugin-template-dashboard-widget-cats",
+  "version": "0.0.2",
+  "author": "Thomas Drevon <thomas@sanity.io>",
+  "description": "Plugin template for a dashboard widget for Sanity Content Studio",
+  "homepage": "https://github.com/sanity-io/plugin-template-dashboard-widget-cats#readme",
+  "public": true,
+  "keywords": [
+    "sanity",
+    "pluign",
+    "part",
+    "dashboard",
+    "widget",
+    "cats"
+  ],
+  "main": "lib/index.js",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanity-io/plugin-template-dashboard-widget-cats/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanity-io/plugin-template-dashboard-widget-cats.git"
+  },
+  "peerDependencies": {
+    "prop-types": "^15.6 || ^16",
+    "react": "^16"
+  },
+  "sanityTemplate": {
+    "suggestedName": "my-dashboard-widget",
+    "requiresConfig": false,
+    "minimumCliVersion": "0.140.0",
+    "minimumBaseVersion": "0.140.0",
+    "dependencies": {
+      "get-it": "^4.1.4"
+    }
+  }
+
+}
