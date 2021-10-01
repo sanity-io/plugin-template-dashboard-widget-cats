@@ -1,67 +1,71 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import getIt from 'get-it'
-import jsonResponse from 'get-it/lib/middleware/jsonResponse'
-import promise from 'get-it/lib/middleware/promise'
-import Button from 'part:@sanity/components/buttons/default'
+import React, { useEffect, useState } from "react";
+import getIt from "get-it";
+import jsonResponse from "get-it/lib/middleware/jsonResponse";
+import promise from "get-it/lib/middleware/promise";
+import { DashboardWidget } from "@sanity/dashboard";
+import { Button, Flex, Card, Code } from "@sanity/ui";
+import styled from "styled-components";
 
-import styles from './Cats.css'
+const request = getIt([promise(), jsonResponse()]);
 
-const request = getIt([promise(), jsonResponse()])
+const Image = styled.img`
+  display: block;
+  width: 100%;
+`;
 
-class Cats extends React.Component {
-  static propTypes = {
-    imageWidth: PropTypes.number
-  }
+function Cats() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
-  static defaultProps = {
-    imageWidth: 600
-  }
-
-  state = {
-    imageUrl: null,
-    error: null
-  }
-  getCat = () => {
-    request({url: 'https://api.thecatapi.com/v1/images/search'})
-      .then(response => {
-        const imageUrl = response.body[0].url
-        this.setState({imageUrl})
+  const getCat = () => {
+    setIsLoading(true);
+    request({ url: "https://api.thecatapi.com/v1/images/search" })
+      .then((response) => {
+        const imageUrl = response.body[0].url;
+        setImageUrl(imageUrl);
+        setIsLoading(false);
       })
-      .catch(error => this.setState({error}))
-  }
+      .catch((error) => setError(error) && setIsLoading(false));
+  };
 
-  componentDidMount() {
-    this.getCat()
-  }
+  useEffect(() => {
+    getCat();
+  }, []);
 
-  render() {
-    const {imageUrl, error} = this.state
-    if (error) {
-      return <pre>{JSON.stringify(error, null, 2)}</pre>
-    }
-    const {imageWidth} = this.props
-    return (
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <h2 className={styles.title}>A cat</h2>
-        </header>
-        <div className={styles.content}>
-          <figure>
-            <img className={styles.img} src={imageUrl} />
-          </figure>
-        </div>
-        <div className={styles.footer}>
-            <Button bleed color="primary" kind="simple" onClick={this.getCat}>
-              Get new cat
-            </Button>
-          </div>
-      </div>
-    )
-  }
+  return (
+    <DashboardWidget
+      header="A cat"
+      footer={
+        <Flex direction="column" align="stretch">
+          <Button
+            flex={1}
+            paddingX={2}
+            paddingY={4}
+            mode="bleed"
+            tone="primary"
+            text="Get new cat"
+            loading={isLoading}
+            onClick={getCat}
+          />
+        </Flex>
+      }
+    >
+      {error && (
+        <Card paddingX={3} paddingY={4} tone="critical">
+          <Code>{JSON.stringify(error, null, 2)}</Code>
+        </Card>
+      )}
+      {!error && (
+        <figure>
+          <Image src={imageUrl} />
+        </figure>
+      )}
+    </DashboardWidget>
+  );
 }
 
 export default {
-  name: 'cats',
-  component: Cats
-}
+  name: "cats",
+  component: Cats,
+};
